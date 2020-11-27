@@ -5,27 +5,33 @@
 }
 
 <h3>Library > <b>@Model.Name</b></h3>
+<a asp-controller="Files" asp-action="Create" class="mainColor">Add File</a>
 <div class="row">
-    <div  class="col-lg-2 mainColorBG">
-        <a asp-controller="Files" asp-action="Create" style="color:aliceblue">Add File</a>
-    </div>
-    <div class="row col-lg-10">
 
-        @foreach (var item in Model.Files)
+
+
+    @foreach (var item in ViewBag.Files)
+    {
+    <div class=" col-6  col-md-4 col-lg-3 col-xl-2 file">
+        <a asp-controller="Folders" asp-action="Details" asp-route-id="@item.Id"><img src="~/FileExtensions/file-8.svg" alt="File" /></a>
+        @if (item.Name.Length < 10)
         {
-            <div style="margin: 0 auto" class=" col-6  col-md-4 col-lg-3 col-xl-2 folder">
-                <a asp-controller="Folders" asp-action="Details" asp-route-id="@item.Id"><img src="~/folder.svg" alt="Folder" /></a>
-                <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name</p>
-                <p></p>
-                <p>@item.Id</p>
-                <p style="text-align: center">@item.Size byte</p>
-            </div>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name</p>
         }
-    </div>
-</div>
+        else
+        {
+            <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name.Remove(7, item.Name.Length - 7)... @item.Extension</p>
+        }
 
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-        <a asp-action="Index">Back to List</a>
+        @*@if (item.size < 10)
+            <p style="text-align: center">@item.Size byte</p>*@
     </div>
+          
+    }
+    </div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
 

@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebImageCloud.Data;
 using WebImageCloud.Models;
+using WebImageCloud.Models.TypesFiles;
+using WebImageCloud.ViewModel;
 
 namespace WebImageCloud.Controllers
 {
@@ -16,13 +22,18 @@ namespace WebImageCloud.Controllers
 
         public FoldersController(WebImageCloudContext context)
         {
+            
             _context = context;
         }
 
         // GET: Folders
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Folder.ToListAsync());
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Folder, FolderViewModel>());
+            // Настройка AutoMapper
+            var mapper = new Mapper(config);
+            var folders = mapper.Map<IEnumerable<FolderViewModel>>(await _context.Folder.ToListAsync());
+            return View(folders );
         }
 
         // GET: Folders/Details/5
@@ -35,6 +46,9 @@ namespace WebImageCloud.Controllers
 
             var folder = await _context.Folder
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            ViewBag.Files = _context.Files.Where(f => f.FolderId == folder.Id);
+
             if (folder == null)
             {
                 return NotFound();
@@ -149,5 +163,7 @@ namespace WebImageCloud.Controllers
         {
             return _context.Folder.Any(e => e.Id == id);
         }
+
+
     }
 }

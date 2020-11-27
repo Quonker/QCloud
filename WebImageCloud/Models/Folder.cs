@@ -15,8 +15,8 @@ namespace WebImageCloud.Models
         public string Name { get; set; }
         public DateTime DateOfCreate { get; set; }
         public DateTime DateOfChange { get; set; }
-        public string Path { get; set; }
-        public int Size { get; set; }
+        //public string Path { get; set; }
+        //public int Size { get; set; }
 
         public User User { get; set; }
         public string UserId { get; set; }

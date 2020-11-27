@@ -12,7 +12,7 @@ namespace WebImageCloud.Models
 
         public User()
         {
-            Folders = new List<Folder>() { new Folder { Name = "Pictures", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now }, new Folder { Name = "Sounds", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now }, new Folder { Name = "Videos", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now } };
+            Folders = new List<Folder>() { new Folder { Name = "Pictures", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now }, new Folder { Name = "Sounds", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now }, new Folder { Name = "Videos", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now }, new Folder { Name = "Other", DateOfCreate = DateTime.Now, DateOfChange = DateTime.Now } };
         }
     }
 }
