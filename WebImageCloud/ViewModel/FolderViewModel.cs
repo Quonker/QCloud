@@ -13,11 +13,5 @@ namespace WebImageCloud.ViewModel
         public User User { get; set; }
         public string UserId { get; set; }
 
-        public List<FileViewModel> Files { get; set; }
-
-        public FolderViewModel()
-        {
-            Files = new List<FileViewModel>();
-        }
     }
 }

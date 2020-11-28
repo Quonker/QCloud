@@ -38,7 +38,7 @@ namespace WebImageCloud.Controllers
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var folders = _context.Folder.Where(f => f.UserId == id);
-             
+            ViewBag.FoldersCount = folders.Select(fol => (_context.Files.Where(fil => fil.FolderId == fol.Id).Count())).ToArray();
             return View(folders);
             
         }

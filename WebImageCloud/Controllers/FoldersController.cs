@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,16 +14,19 @@ using WebImageCloud.Data;
 using WebImageCloud.Models;
 using WebImageCloud.Models.TypesFiles;
 using WebImageCloud.ViewModel;
+using File = WebImageCloud.Models.File;
 
 namespace WebImageCloud.Controllers
 {
+    [Authorize]
     public class FoldersController : Controller
     {
         private readonly WebImageCloudContext _context;
-
-        public FoldersController(WebImageCloudContext context)
+        private readonly IMapper _mapper;
+        public FoldersController(WebImageCloudContext context, IMapper mapper)
         {
-            
+
+            _mapper = mapper;
             _context = context;
         }
 
@@ -43,16 +47,26 @@ namespace WebImageCloud.Controllers
             {
                 return NotFound();
             }
-
-            var folder = await _context.Folder
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            ViewBag.Files = _context.Files.Where(f => f.FolderId == folder.Id);
-
+          
+            var folder = _mapper.Map<FolderViewModel>(await _context.Folder
+                .FirstOrDefaultAsync(m => m.Id == id));
             if (folder == null)
             {
                 return NotFound();
             }
+            var files = _context.Files.Where(f => f.FolderId == folder.Id);
+
+            var filesVM = new List<FileViewModel>();
+
+            foreach (var item in files)
+            {
+                filesVM.Add(_mapper.Map<FileViewModel>(item));
+            }
+
+
+            ViewBag.Files = _mapper.Map<IEnumerable<FileViewModel>>(filesVM);
+
+
 
             return View(folder);
         }
@@ -164,6 +178,29 @@ namespace WebImageCloud.Controllers
             return _context.Folder.Any(e => e.Id == id);
         }
 
+        public ActionResult FolderToolsPartial(string name)
+        {
+            if (!String.IsNullOrEmpty(name))
+            {
+                var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var foldersid = _context.Folder.Where(f => f.UserId == userid).Select(f => f.Id);
+                var files = _context.Files.Where(f => f.FolderId == foldersid.Where(id => id == f.FolderId).FirstOrDefault());
+                var filesVM = new List<FileViewModel>();
+
+
+                foreach (var item in files)
+                {
+                    filesVM.Add(_mapper.Map<FileViewModel>(item));
+                }
+                
+                ViewBag.Files = filesVM;
+            }
+            else
+            {
+                ViewBag.Files = new List<FileViewModel>();
+            }
+            return PartialView();
+        }
 
     }
 }

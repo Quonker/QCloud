@@ -10,7 +10,7 @@ namespace WebImageCloud.Models.TypesFiles
         jpg,
         png,
         gif,
-        tiff,
+        jpeg,
         psd,
         pdf,
         bmp,

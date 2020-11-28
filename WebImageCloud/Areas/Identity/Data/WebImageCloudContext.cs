@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebImageCloud.Models;
+using WebImageCloud.ViewModel;
 
 namespace WebImageCloud.Data
 {
@@ -26,5 +27,7 @@ namespace WebImageCloud.Data
         }
 
         public DbSet<WebImageCloud.Models.Folder> Folder { get; set; }
+
+        public DbSet<WebImageCloud.ViewModel.FolderViewModel> FolderViewModel { get; set; }
     }
 }

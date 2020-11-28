@@ -13,7 +13,9 @@
         <form asp-action="Create" enctype="multipart/form-data">
            
             <div class="form-group">
-                <input class="form-control" name="content" id="content" type="file" />
+                <p><label style="cursor: pointer;  padding: 5px;" for="content" class="createFile">Browse...</label></p>
+                <input class="form-control" name="content" id="content" type="file" style="opacity: 0; position: absolute; z-index: -1;" />
+
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
             @*<div class="form-group">
@@ -37,9 +39,6 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

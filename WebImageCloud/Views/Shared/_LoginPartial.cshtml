@@ -5,6 +5,7 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+   
     <li class="nav-item">
         <div class="mainColorBG" style="border-radius: 50px; width: 44px; height: 44px; text-align: center"><p style="text-align: center; font-size:28px; color:#FFF; font-weight:500; "  class="" > @Char.ToUpper(User.Identity.Name[0])</p></div>
     </li>

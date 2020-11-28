@@ -11,7 +11,11 @@ namespace WebImageCloud.ViewModel
         public string Name { get; set; }
         public int Size { get; set; }
         public string Extension { get; set; }
+        public string Icon { get; set; }
         public FolderViewModel Folder { get; set; }
         public int? FolderId { get; set; }
+
+        public override string ToString() => Name;
     }
+
 }

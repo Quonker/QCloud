@@ -2,3 +2,13 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+function keypressHandler(e) {
+    if (e.which == 13) {
+        e.preventDefault(); //stops default action: submitting form
+        $(this).blur();
+        $('#folderToolsName').focus().click();//give your submit an ID
+    }
+}
+
+$('#folderToolsForm').keypress(keypressHandler);

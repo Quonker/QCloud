@@ -16,6 +16,7 @@ namespace WebImageCloud.Models
         //public int Size { get; set; }
         public byte[] ExtualyFile { get; set; }
         public string Extension { get; set; }
+        public string Icon { get; set; }
         public Folder Folder { get; set; }
         public int? FolderId { get; set; }
 

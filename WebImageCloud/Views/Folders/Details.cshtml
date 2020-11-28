@@ -1,37 +1,63 @@
-﻿@model WebImageCloud.Models.Folder
+﻿@model WebImageCloud.ViewModel.FolderViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h3>Library > <b>@Model.Name</b></h3>
-<a asp-controller="Files" asp-action="Create" class="mainColor">Add File</a>
-<div class="row">
+<h3 style="margin-bottom: 20px;"><a asp-controller="Home" asp-action="Library">Library</a> > <b>@Model.Name</b></h3>
+@*<div class="row">
+    <form asp-action="FolderToolsPartial">
+        <input type="text" id="folderToolsName" name="folderToolsName"/>
+
+    </form>
+    
+
+</div>
+@await Html.PartialAsync("FolderToolsPartial")*@
+
+<div class="row" style="min-height: 90%">
 
 
 
     @foreach (var item in ViewBag.Files)
     {
-    <div class=" col-6  col-md-4 col-lg-3 col-xl-2 file">
-        <a asp-controller="Folders" asp-action="Details" asp-route-id="@item.Id"><img src="~/FileExtensions/file-8.svg" alt="File" /></a>
-        @if (item.Name.Length < 10)
-        {
-            <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name</p>
-        }
-        else
-        {
-            <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name.Remove(7, item.Name.Length - 7)... @item.Extension</p>
-        }
+        <div class=" col-6  col-md-4 col-lg-3 col-xl-1 file">
+            <a asp-controller="Files" asp-action="Download" asp-route-id="@item.Id"><img src= "@String.Format("{0}{1}{2}", "/FileExtensions/", item.Icon, ".svg" )" alt="File" /></a>
+            @if (item.Name.Length < 10)
+            {
+                <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name</p>
+            }
+            else
+            {
+                <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name.Remove(7, item.Name.Length - 7)... @item.Extension</p>
+            }
 
-        @*@if (item.size < 10)
-            <p style="text-align: center">@item.Size byte</p>*@
-    </div>
-          
+            @if (item.Size >= 1073741824)
+            {
+                var inter = item.Size / 1073741824;
+                var fract = (item.Size % 1073741824) / 1048576;
+                <p style="font-size: 12px; color:rgb(84, 84, 84);  text-align: center">@inter.@fract Gb</p>
+            }
+            else @if (item.Size >= 1048576)
+       {
+           var inter = item.Size / 1048576;
+           var fract = (item.Size % 1048576) / 1024;
+        <p style="font-size: 12px; color:rgb(84, 84, 84); text-align: center">@inter.@fract Mb</p>
     }
-    </div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    else @if (item.Size > 999)
+   {
+       var inter = item.Size / 1024;
+       var fract = (item.Size % 1024);
+    <p style="font-size: 12px; color:rgb(84, 84, 84); text-align: center">@inter.@fract kb</p>
+}
+else
+{
+    <p style="font-size: 12px; color:rgb(84, 84, 84);  text-align: center">@item.Size b</p>
+}
+        </div>
+
+    }
 </div>
+
 

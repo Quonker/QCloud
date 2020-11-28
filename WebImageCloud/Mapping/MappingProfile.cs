@@ -17,6 +17,19 @@ namespace WebImageCloud.Mapping
                 dest.Size,
                 opt => opt.MapFrom(src => src.ExtualyFile.Length));
             CreateMap<Folder, FolderViewModel>();
+
+            CreateMap<FileViewModel, File>();
+            CreateMap<FolderViewModel, Folder>();
+
+            CreateMap<IEnumerable<File>, IEnumerable<FileViewModel>>();
+
+            CreateMap<IEnumerable<Folder>, IEnumerable<FolderViewModel>>();
+
+            CreateMap<IQueryable<File>, IQueryable<FileViewModel>>();
+            CreateMap<IQueryable<Folder>, IQueryable<FolderViewModel>>();
+
+            CreateMap<IEnumerable<FileViewModel>, IEnumerable<File>>();
+            CreateMap<IEnumerable<FolderViewModel>, IEnumerable<Folder>>();
         }
        
     }

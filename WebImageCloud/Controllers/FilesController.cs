@@ -4,16 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebImageCloud.Data;
 using WebImageCloud.Models;
+using WebImageCloud.Models.FileExtensions;
 using WebImageCloud.Models.TypesFiles;
 
 namespace WebImageCloud.Controllers
 {
+    [Authorize]
     public class FilesController : Controller
     {
         private readonly WebImageCloudContext _context;
@@ -76,47 +79,57 @@ namespace WebImageCloud.Controllers
                             file.Name = content.FileName;
                             //file.Size = (int)content.Length;
                             file.Extension = Path.GetExtension(content.FileName).Remove(0, 1);
-                            var fileType = FileType(file.Extension);
+                            var fileType = FileType(ref file);
                             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
                             file.FolderId = _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).Id;
+                            _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).DateOfChange = DateTime.Now;
                             await content.CopyToAsync(memoryStream);
                             file.ExtualyFile = memoryStream.ToArray();
 
                         }
                         _context.Add(file);
                         await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
+                        return LocalRedirect("~/Home/Library");
                     }
 
                 }
                 else
                 {
-                    return RedirectToAction(nameof(Index));
+                    return LocalRedirect("~/Home/Library");
                 }
             }
             ViewData["FolderId"] = new SelectList(_context.Set<Folder>(), "Id", "Id", file.FolderId);
             return View(file);
         }
 
-        private string FileType(string FileExtension)
+        private string FileType(ref Models.File File)
         {
-            foreach (var t in (EnumAudioTypes[])Enum.GetValues(typeof(EnumAudioTypes)))
+            foreach (var t in (EnumFileIcons[])Enum.GetValues(typeof(EnumFileIcons)))
             {
-                if (FileExtension == t.ToString())
+                if (File.Extension == t.ToString())
+                {
+                    File.Icon = t.ToString();
+                    break;
+                }
+                File.Icon = "file-8";
+            }
+                foreach (var t in (EnumAudioTypes[])Enum.GetValues(typeof(EnumAudioTypes)))
+            {
+                if (File.Extension == t.ToString())
                 {
                     return "Sounds";
                 }
             }
             foreach (var t in (EnumImageTypes[])Enum.GetValues(typeof(EnumImageTypes)))
             {
-                if (FileExtension == t.ToString())
+                if (File.Extension == t.ToString())
                 {
                     return "Pictures";
                 }
             }
             foreach (var t in (EnumVideoTypes[])Enum.GetValues(typeof(EnumVideoTypes)))
             {
-                if (FileExtension == t.ToString())
+                if (File.Extension == t.ToString())
                 {
                     return "Videos";
                 }
@@ -211,6 +224,19 @@ namespace WebImageCloud.Controllers
         private bool FileExists(int? id)
         {
             return _context.Files.Any(e => e.Id == id);
+        }
+
+        public ActionResult Download(int? id)
+        {
+            if (id != null)
+            {
+                var file = _context.Files.FirstOrDefault(f => f.Id == id);
+                if(file != null)
+                {
+                    return File(file.ExtualyFile, System.Net.Mime.MediaTypeNames.Application.Octet, file.Name);
+                }
+            }
+            return NotFound();
         }
     }
 }

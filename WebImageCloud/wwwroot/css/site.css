@@ -174,9 +174,7 @@ body {
 /********************        Library                 ********************/
 /* Folder  */
 .folder {
-    width: 90%;
-    height: 0;
-    padding-bottom: 90%;
+   
 }
 
 .folder img {
@@ -194,12 +192,25 @@ body {
 }
 
 .file {
-    width: 90%;
-    height: 0;
-    padding-bottom: 90%;
+    
 }
 
     .file img {
         width: 34%;
         margin: auto 32%;
     }
+
+.folderTools {
+    width: 140px;
+    padding: 8px;
+
+
+}
+
+    .folderTools:hover {
+        background-color: #e5fff7;
+        color: var(--main-color);
+    }
+.createFile:hover {
+    background-color: #e5fff7;
+}
