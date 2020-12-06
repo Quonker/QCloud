@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using WebImageCloud.Models;
 using AutoMapper;
 using WebImageCloud.Mapping;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using WebImageCloud.Services;
 
 namespace WebImageCloud
 {
@@ -52,6 +54,9 @@ namespace WebImageCloud
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

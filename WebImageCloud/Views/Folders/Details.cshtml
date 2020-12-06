@@ -17,8 +17,6 @@
 
 <div class="row" style="min-height: 90%">
 
-
-
     @foreach (var item in ViewBag.Files)
     {
         <div class=" col-6  col-md-4 col-lg-3 col-xl-1 file">
@@ -29,7 +27,7 @@
             }
             else
             {
-                <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name.Remove(7, item.Name.Length - 7)... @item.Extension</p>
+                <p style="text-align: center; font-size: 14px; margin-bottom: 0">@item.Name.Remove(7, item.Name.Length - 7)... .@item.Extension</p>
             }
 
             @if (item.Size >= 1073741824)

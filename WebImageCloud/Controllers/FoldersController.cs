@@ -47,9 +47,18 @@ namespace WebImageCloud.Controllers
             {
                 return NotFound();
             }
+
           
             var folder = _mapper.Map<FolderViewModel>(await _context.Folder
                 .FirstOrDefaultAsync(m => m.Id == id));
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(userId != folder.UserId)
+            {
+                return LocalRedirect("~/Home/Library");
+            }
+
             if (folder == null)
             {
                 return NotFound();
