@@ -37,8 +37,13 @@ namespace WebImageCloud.Controllers
         public IActionResult Library()
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
             var folders = _context.Folder.Where(f => f.UserId == id);
             ViewBag.FoldersCount = folders.Select(fol => (_context.Files.Where(fil => fil.FolderId == fol.Id).Count())).ToArray();
+            ViewBag.Storage = folders.Sum(f => f.Size);
+            ViewBag.StorageDiv = (Convert.ToDouble(folders.Sum(f => f.Size)) / user.Storage) * 100;
+            ViewBag.MaxStorage = user.Storage;
+
             return View(folders);
             
         }

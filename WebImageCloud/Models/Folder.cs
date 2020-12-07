@@ -16,7 +16,7 @@ namespace WebImageCloud.Models
         public DateTime DateOfCreate { get; set; }
         public DateTime DateOfChange { get; set; }
         //public string Path { get; set; }
-        //public int Size { get; set; }
+        public long Size { get; set; }
 
         public User User { get; set; }
         public string UserId { get; set; }
@@ -25,6 +25,7 @@ namespace WebImageCloud.Models
 
         public Folder()
         {
+            Size = 0;
             Files = new List<File>();
         }
     }

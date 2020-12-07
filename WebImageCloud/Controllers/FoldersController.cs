@@ -59,6 +59,7 @@ namespace WebImageCloud.Controllers
                 return LocalRedirect("~/Home/Library");
             }
 
+            
             if (folder == null)
             {
                 return NotFound();

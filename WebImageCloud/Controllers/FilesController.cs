@@ -13,6 +13,7 @@ using WebImageCloud.Data;
 using WebImageCloud.Models;
 using WebImageCloud.Models.FileExtensions;
 using WebImageCloud.Models.TypesFiles;
+using WebImageCloud.Views.Files;
 
 namespace WebImageCloud.Controllers
 {
@@ -64,6 +65,7 @@ namespace WebImageCloud.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [RequestSizeLimit(2147483648)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(/*[Bind("Id,Name,Path,Size,FolderId")] Models.File file,*/ IFormFile content)
         {
@@ -74,28 +76,46 @@ namespace WebImageCloud.Controllers
                 {
                     if (content.Length > 0)
                     {
-                        using (var memoryStream = new MemoryStream())
+                        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var user = _context.Users.FirstOrDefault(u => u.Id == id);
+                        if (content.Length + user.UseStorage <= user.Storage)
                         {
-                            file.Name = content.FileName;
-                            //file.Size = (int)content.Length;
-                            file.Extension = Path.GetExtension(content.FileName).Remove(0, 1);
-                            var fileType = FileType(ref file);
-                            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                            file.FolderId = _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).Id;
-                            _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).DateOfChange = DateTime.Now;
-                            await content.CopyToAsync(memoryStream);
-                            file.ExtualyFile = memoryStream.ToArray();
+                            int? folderId;
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                file.Name = content.FileName;
+                                //file.Size = (int)content.Length;
+                                file.Extension = Path.GetExtension(content.FileName).Remove(0, 1);
+                                var fileType = FileType(ref file);
+
+                                folderId = _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).Id;
+                                file.FolderId = folderId;
+                                _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).DateOfChange = DateTime.Now;
+                               
+                                await content.CopyToAsync(memoryStream);
+                                file.ExtualyFile = memoryStream.ToArray();
+                                _context.Folder.Where(f => f.UserId == id).FirstOrDefault(f => f.Name == fileType).Size += file.ExtualyFile.Length;
+
+                            }
+                            _context.Add(file);
+                            await _context.SaveChangesAsync();
+                            return LocalRedirect("~/Folders/Details/" + folderId);
+                        }
+                        else
+                        {
+                            ViewBag.Modal = "size";
+                            return View();
+                            //  return PartialView("FilesOutOfMemory");
 
                         }
-                        _context.Add(file);
-                        await _context.SaveChangesAsync();
-                        return LocalRedirect("~/Home/Library");
+                       
                     }
 
                 }
                 else
                 {
-                    return LocalRedirect("~/Home/Library");
+                    ViewBag.Modal = "null";
+                    return View();
                 }
             }
             ViewData["FolderId"] = new SelectList(_context.Set<Folder>(), "Id", "Id", file.FolderId);

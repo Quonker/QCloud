@@ -17,6 +17,7 @@ using AutoMapper;
 using WebImageCloud.Mapping;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using WebImageCloud.Services;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace WebImageCloud
 {
@@ -57,6 +58,12 @@ namespace WebImageCloud
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
